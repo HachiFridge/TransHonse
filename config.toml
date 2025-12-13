@@ -8,6 +8,9 @@ top_p = 0.95
 top_k = 40
 repetition_penalty = 1.1
 retry_attempts = 4
+raw_folder = "raw"
+char_system_text_raw = "character_system_text_example.json"
+char_system_text_reference = "translated/character_system_text.json" 
 
 system_prompt = '''
 # Role and Objective

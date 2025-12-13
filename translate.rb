@@ -22,7 +22,6 @@ def iterate_json(file_path)
     output_path = File.join("translated", sliced_path)
     output_dir = File.dirname(output_path)
     FileUtils.mkdir_p(output_dir)
-    puts output_path
 
     if File.exist?(output_path)
         puts "#{sliced_path} already exists, skipping"
@@ -68,6 +67,63 @@ def iterate_json(file_path)
     $file_count += 1
 end
 
+def char_system_text()
+    batch_start_time = Time.now
+    raw = $server['char_system_text_raw']
+    ref = $server['char_system_text_reference']
+    puts "Reading #{raw} JSON file..."
+
+    if !File.exist?(raw)
+        puts "No character_system_text.json file to translate."
+        return
+    end
+    file_raw_json = JSON.parse(File.read(raw))
+    file_ref_json = {}
+    reference_toggle = false
+
+    if File.exist?(ref)
+        content = File.read(ref)
+        if content.strip.empty?
+             puts "Reference file is empty. Disabling referencing."
+        else
+             file_ref_json = JSON.parse(content)
+             reference_toggle = true
+        end
+    else
+        puts "No reference file found. Will create new one."
+    end
+
+    file_raw_json.each do |char_id, messages_hash|
+        puts "Character ID: #{char_id}"
+        messages_hash.each do |msg_id, text|
+            puts "[#{msg_id}]: #{text}"
+            reference_text = file_ref_json.dig(char_id, msg_id) 
+            if reference_text and reference_toggle == true
+                puts "Translation for [#{char_id}][#{msg_id}] already exists in #{ref}. Skipping."
+                $skip_count += 1
+            else
+                enText = translate_api(text)
+                file_raw_json[char_id][msg_id] = enText    
+            end
+            if reference_toggle == false
+                enText = translate_api(text)
+                file_raw_json[char_id][msg_id] = enText   
+                puts "[#{msg_id}]: #{enText}"
+                $file_count += 1
+            end
+        end
+    end
+
+    FileUtils.mkdir_p("translated")
+    File.write("translated/character_system_text.json", JSON.pretty_generate(file_raw_json))
+    puts "Completed translating character system text"
+    batch_end_time = Time.now
+    batch_duration = batch_end_time - batch_start_time
+    puts "Lines processed: #{$file_count}"
+    puts "Lines Skipped: #{$skip_count}"
+    puts "Total batch time: #{'%.2f' % batch_duration} seconds."
+end
+
 def translate_api(rawText)
     payload = {
         model: $server['model'],
@@ -96,23 +152,42 @@ def translate_api(rawText)
 end
 
 def trans_loop(target_folder)
-  unless Dir.exist?(target_folder)
+    unless Dir.exist?(target_folder)
     puts "Folder does not exist"
     return
-  end
+    end
 
-  puts "Running through all files in #{target_folder}"
-  batch_start_time = Time.now
+    puts "Running through all files in \"#{target_folder}\""
+    batch_start_time = Time.now
 
-  Dir.glob(File.join(target_folder, "**/*.json")).each do |file_path|
+    Dir.glob(File.join(target_folder, "**/*.json")).each do |file_path|
     iterate_json(file_path)
-  end
+    end
 
-  batch_end_time = Time.now
-  batch_duration = batch_end_time - batch_start_time
-  puts "Files processed: #{$file_count}"
-  puts "Files Skipped: #{$skip_count}"
-  puts "Total batch time: #{'%.2f' % batch_duration} seconds."
+    batch_end_time = Time.now
+    batch_duration = batch_end_time - batch_start_time
+    puts "Files processed: #{$file_count}"
+    puts "Files Skipped: #{$skip_count}"
+    puts "Total batch time: #{'%.2f' % batch_duration} seconds."
+    $file_count = 0
+    $skip_count = 0
 end
 
-trans_loop('raw')
+def main()
+    puts "TransHonse LLM Slop \n Translate Folder (f) or Character System Text (c) or leave blank for both."
+    input = gets
+    if input == "folder" || "f"
+        trans_loop($server['raw_folder'])
+    end
+    if input == "character system text" || "c"
+        char_system_text()
+    end
+    if input == ""
+        trans_loop($server['raw_folder'])
+        char_system_text()
+    end
+    puts "All tasks complete"    
+end
+
+main()
+
