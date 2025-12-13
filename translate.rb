@@ -10,13 +10,25 @@ $url = $server['api_url']
 puts $url
 dictionary = File.read('dictionary.json')
 $dictionary_str = JSON.parse(dictionary)
-rawText = "monologue"
+$file_count = 0
+$skip_count = 0
 
 def iterate_json(file_path)
     puts "Reading #{file_path} JSON File..."
     file = File.read(file_path)
     file_json = JSON.parse(file)
     text = file_json['text_block_list']
+    sliced_path = file_path.byteslice(4, 256)
+    output_path = File.join("translated", sliced_path)
+    output_dir = File.dirname(output_path)
+    FileUtils.mkdir_p(output_dir)
+    puts output_path
+
+    if File.exist?(output_path)
+        puts "#{sliced_path} already exists, skipping"
+        $skip_count += 1
+        return
+    end    
 
     text.each_with_index do |text, text_index|
         #raw line info
@@ -50,12 +62,10 @@ def iterate_json(file_path)
             text['choice_data_list'][choice_index] = enChoice 
         end
     end
-    sliced_path = file_path.byteslice(4, 256)
-    output_path = File.join("translated", sliced_path)
-    output_dir = File.dirname(output_path)
-    FileUtils.mkdir_p(output_dir)
+
     File.write(output_path, JSON.dump(JSON.pretty_generate(file_json)))
     puts "Saved to: #{output_path}"
+    $file_count += 1
 end
 
 def translate_api(rawText)
@@ -93,16 +103,15 @@ def trans_loop(target_folder)
 
   puts "Running through all files in #{target_folder}"
   batch_start_time = Time.now
-  file_count = 0
 
   Dir.glob(File.join(target_folder, "**/*.json")).each do |file_path|
     iterate_json(file_path)
-    file_count += 1
   end
 
   batch_end_time = Time.now
-  batch_duration = batch_end_time - batch_start_tim
-  puts "Files processed: #{file_count}"
+  batch_duration = batch_end_time - batch_start_time
+  puts "Files processed: #{$file_count}"
+  puts "Files Skipped: #{$skip_count}"
   puts "Total batch time: #{'%.2f' % batch_duration} seconds."
 end
 
