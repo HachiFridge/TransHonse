@@ -26,13 +26,14 @@ def iterate_json(file_path)
         #name translation logic
         if (text["jpName"] == 'モノローグ' or text["jpName"] == '') #checks if the name is a monologue blank
             text["jpName"] = ''
+            enName = ''
         else
             enName = translate_api(text['jpName'])
         end
         #text translation logic
         enText = translate_api(text['jpText'])  
         puts "Translated Line ##{text_index}" 
-        puts "Name: #{enName}\nText:#{enText}"
+        puts "Name: #{enName}\nText: #{enText}"
 
         (text['choices'] || []).each_with_index do |choices, choice_index|
             #raw choices info
