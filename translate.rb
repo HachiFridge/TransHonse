@@ -15,35 +15,36 @@ def iterate_json(file_path)
     puts "Reading #{file_path} JSON File..."
     file = File.read(file_path)
     file_json = JSON.parse(file)
-    text = file_json['text']
+    text = file_json['text_block_list']
 
     text.each_with_index do |text, text_index|
         #raw line info
         puts "Raw Line ##{text_index}"
-        puts "Name: #{text["jpName"]}"
-        puts "Text: #{text["jpText"]}"
+        puts "Name: #{text["name"]}"
+        puts "Text: #{text["text"]}"
 
         #name translation logic
-        if (text["jpName"] == 'モノローグ' or text["jpName"] == '') #checks if the name is a monologue blank
-            text["jpName"] = ''
+        if (text["name"] == 'モノローグ' or text["name"] == '') #checks if the name is a monologue blank
+            text["text"] = ''
             enName = ''
         else
-            enName = translate_api(text['jpName'])
+            enName = translate_api(text['name'])
         end
         #text translation logic
-        enText = translate_api(text['jpText'])  
+        enText = translate_api(text['text'])  
         puts "Translated Line ##{text_index}" 
         puts "Name: #{enName}\nText: #{enText}"
+    
 
-        (text['choices'] || []).each_with_index do |choices, choice_index|
+        (text['choice_data_list'] || []).each_with_index do |choices, choice_index|
             #raw choices info
             puts "Raw Choice ##{choice_index}:"
-            puts "Text: #{choices['jpText']}"
+            puts "Text: #{choices}"
             #choice translation logic
-            enChoice = translate_api(choices['jpText'])
+            enChoice = translate_api(choices)
             puts "Translated Choice #{choice_index}: #{enChoice}"
         end
-    end 
+    end
 end
 
 def translate_api(rawText)
