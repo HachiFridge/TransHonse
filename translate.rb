@@ -109,17 +109,19 @@ def char_system_text()
         puts "Character ID: #{char_id}"
         messages_hash.each do |msg_id, text|
             puts "[#{msg_id}]: #{text}"
-            reference_text = file_ref_json.dig(char_id, msg_id) 
+
+            # Check if translation exists in reference file
+            reference_text = file_ref_json.dig(char_id, msg_id)
+
             if reference_text and reference_toggle == true
+                # Use existing translation from reference
                 puts "Translation for [#{char_id}][#{msg_id}] already exists in #{ref}. Skipping."
+                file_raw_json[char_id][msg_id] = reference_text
                 $skip_count += 1
             else
+                # Translate new text
                 enText = translate_api(text)
-                file_raw_json[char_id][msg_id] = enText    
-            end
-            if reference_toggle == false
-                enText = translate_api(text)
-                file_raw_json[char_id][msg_id] = enText   
+                file_raw_json[char_id][msg_id] = enText
                 puts "[#{msg_id}]: #{enText}"
                 $file_count += 1
             end
