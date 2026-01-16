@@ -16,12 +16,14 @@ GEM
     racc (1.8.1)
     rubyzip (3.2.2)
     sqlite3 (2.8.1-x64-mingw-ucrt)
+    sqlite3 (2.8.1-x86_64-linux-gnu)
     toml-rb (4.1.0)
       citrus (~> 3.0, > 3.0)
       racc (~> 1.7)
 
 PLATFORMS
   x64-mingw-ucrt
+  x86_64-linux
 
 DEPENDENCIES
   fileutils (~> 1.8)

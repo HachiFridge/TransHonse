@@ -7,7 +7,11 @@ My LLM Translation workflow rewritten in ruby because I felt like it and had fun
 Obviously you need ruby installed. Run ```bundle install``` to install all required gems.\
 While these scripts are primarily written in ruby, the extract scripts are actually a ruby wrapper running unitypy.\
 Therefore, you need python 3.8+ to run this as well as installing all required dependencies in requirements.txt via ```pip install requirements.txt``` or whatever.\
-This was also made running on Windows 10, other OS I have no idea if it'll work
+This was also made running on Windows 10, other OS I have no idea if it'll work \
+
+It is also recommended to use a python virtual environment \
+python -m venv .venv \
+source .venv/bin/activate.fish
 
 ### Config
 refer to ```config.toml``` file for an example of all required variables
