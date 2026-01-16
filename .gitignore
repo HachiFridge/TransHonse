@@ -1,8 +1,44 @@
-translations/
-raw/
-translated/
-meta_decrypted.sqlite
-master.mdb
-extracted_text/
-spootmtlslop_revised_reko/
-updates/
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+*.egg-info/
+
+# Ruby
+*.gem
+.bundle/
+
+# Data files (large/generated)
+data/raw/**
+data/translated/**
+data/game/*.mdb
+data/game/*.sqlite
+!data/game/.gitkeep
+
+
+# Output files
+output/packages/*.zip
+output/logs/*.log
+output/tracking/*.json
+output/build/
+
+# Archive
+archive/
+
+# Temporary
+temp/
+*.tmp
+
+# System
+.DS_Store
+Thumbs.db
+nul
+
+# Editor
+.vscode/*
+!.vscode/settings.json
+.claude/*
+!.claude/settings.local.json
+
+# Keep directory structure
+!**/.gitkeep
