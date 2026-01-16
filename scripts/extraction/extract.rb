@@ -25,7 +25,7 @@ class UnityAssetExtractor
       id: nil,
       idx: nil,
       story_id: nil,
-      dst: Pathname.new('raw'),
+      dst: Pathname.new('data/raw'),
       overwrite: false,
       workers: 4,
       meta: nil,

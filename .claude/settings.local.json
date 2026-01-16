@@ -1,0 +1,8 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(ruby generate_qc_progress.rb:*)",
+      "Bash(ls:*)"
+    ]
+  }
+}
