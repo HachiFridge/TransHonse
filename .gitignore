@@ -15,13 +15,15 @@ data/game/*.mdb
 data/game/*.sqlite
 !data/game/.gitkeep
 data/game/references/**
+data/references/**
 
 
 # Output files
-output/packages/*.zip
-output/logs/*.log
-output/tracking/*.json
-output/build/
+output/**
+!output/.gitkeep
+!output/packages/.gitkeep
+!output/logs/.gitkeep
+!output/tracking/.gitkeep
 
 # Archive
 archive/
@@ -43,3 +45,7 @@ nul
 
 # Keep directory structure
 !**/.gitkeep
+
+# Scripts
+scripts/qc/
+migration/
